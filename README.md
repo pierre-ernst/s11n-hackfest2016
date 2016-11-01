@@ -1,5 +1,5 @@
 # Fixing the Java Serialization mess
-Supporting source code for a [HackFest 2016 presentation](https://hackfest.ca/en/speakers/#ernst)
+Supporting source code for a [HackFest 2016 presentation](https://goo.gl/rOpF0u)
 
 ![Bonhomme Carnaval, Duke-style](bonhomme-duke.svg.png "Bonhomme Carnaval, Duke-style")
 
@@ -85,8 +85,12 @@ Send the file to the remote TomEE server:
 wget --post-file tomee2.ser http://remote-server:8080/tomee/ejb
 ```
 
-### POC for LookAhead Bytecode Blacklist
+### POC for LookAhead Method Blacklist
 #### Input validation flow
 ![Flow chart](flow-chart.svg.png "Flow chart")
 #### Code
 Package `com.salesforce.trust.s11n.mitigation`
+#### Usage:
+```bash
+mvn test
+```
