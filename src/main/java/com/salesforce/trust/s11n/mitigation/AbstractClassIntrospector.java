@@ -41,12 +41,6 @@ public abstract class AbstractClassIntrospector implements ClassIntrospector {
 		}
 
 		try {
-			magicMethods.add(cls.getDeclaredMethod("validateObject", new Class<?>[] {}));
-		} catch (NoSuchMethodException ex) {
-			// validateObject() not declared
-		}
-		
-		try {
 			magicMethods.add(cls.getDeclaredMethod("finalize", new Class<?>[] {}));
 		} catch (NoSuchMethodException ex) {
 			// finalize() not declared
@@ -57,9 +51,9 @@ public abstract class AbstractClassIntrospector implements ClassIntrospector {
 		} catch (NoSuchMethodException ex) {
 			// readObjectNoData() not declared
 		}
-		
+
 		try {
-			magicMethods.add(cls.getDeclaredMethod("readExternal", new Class<?>[] {ObjectInput.class}));
+			magicMethods.add(cls.getDeclaredMethod("readExternal", new Class<?>[] { ObjectInput.class }));
 		} catch (NoSuchMethodException ex) {
 			// readExternal() not declared
 		}
@@ -68,7 +62,6 @@ public abstract class AbstractClassIntrospector implements ClassIntrospector {
 	}
 
 	public static ClassIntrospector getInstance() {
-		// TODO: add other implementations
 		try {
 			Class.forName("serp.bytecode.Project");
 			return new SerpClassIntrospector();

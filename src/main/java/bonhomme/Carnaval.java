@@ -1,8 +1,5 @@
 package bonhomme;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
@@ -34,6 +31,13 @@ public class Carnaval implements Serializable {
 		return buffer.getLong();
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Carnaval) {
+			return true;
+		}
+		return false;
+	}
 
 	public static void main(String... args) {
 		try {
